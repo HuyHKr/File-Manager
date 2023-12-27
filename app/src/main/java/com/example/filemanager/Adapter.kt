@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnCreateContextMenuListener
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -64,15 +65,18 @@ class Adapter(val listEntry:ArrayList<File>):RecyclerView.Adapter<Adapter.MyView
                 }
                 menu?.add(0,1,1,"Rename")?.setOnMenuItemClickListener {
                     val builder:AlertDialog.Builder = AlertDialog.Builder(holder.view.context)
+                    val view = LayoutInflater.from(holder.view.context).inflate(R.layout.rename,null)
+
                     builder.setTitle("Rename")
                         .setMessage("Bạn có muốn đổi tên?")
+                        .setView(view)
                         .setPositiveButton("OK"){dialog,id->
-                            if(currentFile?.delete()!!){
-                                listEntry.removeAt(position)
-                                notifyDataSetChanged()
-                                Toast.makeText(holder.view.context,"Deleted",Toast.LENGTH_LONG).show()
-
-                            }else Toast.makeText(holder.view.context,"Fail to Delete",Toast.LENGTH_LONG).show()
+                           val content = view.findViewById<EditText>(R.id.editTextText).text.toString()
+                            val newPath = rootOfDirectory+"/${content}"
+                            listEntry[position] = File(newPath)
+                            notifyDataSetChanged()
+                            currentFile?.renameTo(File(newPath))
+                            Toast.makeText(holder.view.context,"successfull",Toast.LENGTH_LONG).show()
 
                         }.show()
                     true
