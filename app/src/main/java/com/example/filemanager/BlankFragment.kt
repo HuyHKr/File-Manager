@@ -1,11 +1,17 @@
 package com.example.filemanager
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import android.view.ActionMode
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
@@ -22,7 +28,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class BlankFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var rootOfDirectory: String? = null
+
+    var rootOfDirectory: String? = null
     lateinit var listEntry:Array<File>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +56,11 @@ class BlankFragment : Fragment() {
         listEntry = File(rootOfDirectory).listFiles()
         val adapter = Adapter(ArrayList<File>(listEntry!!.asList()))
         adapter.rootOfDirectory = rootOfDirectory!!
+        adapter.activity= activity as MainActivity
         adapter.openNewFragment={
             (activity as MainActivity).addFragment(BlankFragment.newInstance(it))
         }
+
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(this.context)
         Log.v("TAG","onviewCreated")

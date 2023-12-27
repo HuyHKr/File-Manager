@@ -9,16 +9,21 @@ import android.content.Intent
 import android.os.Environment
 import android.provider.Settings
 import android.util.Log
+import android.view.ActionMode
 import android.view.ContextMenu
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import java.io.File
+import androidx.appcompat.view.ActionMode.Callback
 
 class MainActivity : AppCompatActivity() {
     lateinit var rootOfDirectory:String
+    var actionMode:ActionMode? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -46,9 +51,51 @@ class MainActivity : AppCompatActivity() {
     fun addFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainerView,fragment).addToBackStack(null).commit()
     }
+    fun findFragment():BlankFragment{
+       return  supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as BlankFragment
+    }
+
+    fun start(from:String,name:String) {
+        val actionModeCallBack=ActionModeCallBack(name)
+        actionModeCallBack.activity = this
+        actionModeCallBack.from = from
+
+        startActionMode(actionModeCallBack )
+    }
 
 
+}
 
+class ActionModeCallBack(val name:String): ActionMode.Callback{
+    lateinit var activity: MainActivity
+    lateinit var from:String
+    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        menu?.add(0,0,1,"Chuyển đến đây")
+        menu?.add(0,1,0,"Quay lai")
+        return true
+    }
+
+    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        return  true
+    }
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+        if(item?.itemId == 0) {
+            val select = activity?.findFragment()?.rootOfDirectory!!+name
+            Log.v("TAG",select!!)
+            val fromFile = File(from)
+            fromFile.copyTo(File(select!!),true)
+            Toast.makeText(activity, "successfull", Toast.LENGTH_LONG).show()
+            mode?.finish()
+        }else{
+            activity.supportFragmentManager.beginTransaction().remove((activity?.findFragment()) as Fragment).commit()
+        }
+        return true
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode?) {
+
+    }
 
 }
 

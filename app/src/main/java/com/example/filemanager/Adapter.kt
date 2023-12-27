@@ -2,18 +2,26 @@ package com.example.filemanager
 
 import android.app.AlertDialog
 import android.util.Log
+import android.view.ActionMode
+import android.view.ActionMode.Callback
 import android.view.ContextMenu
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.View.OnCreateContextMenuListener
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 
 class Adapter(val listEntry:ArrayList<File>):RecyclerView.Adapter<Adapter.MyViewHolder>() {
+    val actionMode:ActionMode? = null
+    lateinit var activity:MainActivity
+
     lateinit var rootOfDirectory:String
     lateinit var openNewFragment: (String)->Unit
     class MyViewHolder(var view: View):RecyclerView.ViewHolder(view){
@@ -68,7 +76,7 @@ class Adapter(val listEntry:ArrayList<File>):RecyclerView.Adapter<Adapter.MyView
                     val view = LayoutInflater.from(holder.view.context).inflate(R.layout.rename,null)
 
                     builder.setTitle("Rename")
-                        .setMessage("Bạn có muốn đổi tên?")
+                        .setMessage("Đổi tên thành?")
                         .setView(view)
                         .setPositiveButton("OK"){dialog,id->
                            val content = view.findViewById<EditText>(R.id.editTextText).text.toString()
@@ -79,6 +87,10 @@ class Adapter(val listEntry:ArrayList<File>):RecyclerView.Adapter<Adapter.MyView
                             Toast.makeText(holder.view.context,"successfull",Toast.LENGTH_LONG).show()
 
                         }.show()
+                    true
+                }
+                menu?.add(0,2,2,"CopyTo")?.setOnMenuItemClickListener {
+                    activity.start(fullPath!!,name!!)
                     true
                 }
             }
