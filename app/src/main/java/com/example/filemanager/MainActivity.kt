@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
+import androidx.fragment.app.Fragment
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -40,7 +41,10 @@ class MainActivity : AppCompatActivity() {
         rootOfDirectory = Environment.getExternalStorageDirectory().path
         val firstFragment = BlankFragment.newInstance(rootOfDirectory)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainerView,firstFragment).addToBackStack(null).commit()
-
+        Log.v("TAG","added")
+    }
+    fun addFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().add(R.id.fragmentContainerView,fragment).addToBackStack(null).commit()
     }
 
 

@@ -47,12 +47,16 @@ class BlankFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val rv = view.findViewById<RecyclerView>(R.id.rc)
         listEntry = File(rootOfDirectory).listFiles()
-        val adapter = Adapter(listEntry)
+        val adapter = Adapter(ArrayList<File>(listEntry!!.asList()))
         adapter.rootOfDirectory = rootOfDirectory!!
+        adapter.openNewFragment={
+            (activity as MainActivity).addFragment(BlankFragment.newInstance(it))
+        }
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(this.context)
         Log.v("TAG","onviewCreated")
     }
+
 
     companion object {
         /**
